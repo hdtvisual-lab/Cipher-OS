@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDT Digital | Cipher Agency OS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col md:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between p-6">
+        <div>
+            <h1 class="text-xl font-bold tracking-wider text-emerald-400"><i class="fa-solid fa-brain"></i> HDT DIGITAL</h1>
+            <p class="text-xs text-zinc-400 mt-1">Cipher Autonomous OS</p>
+            
+            <nav class="mt-6 space-y-2">
+                <a href="#" onclick="switchAgent('Mastermind', 'Chat & Strategy')" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-emerald-500/10 text-emerald-400 font-medium nav-link"><i class="fa-solid fa-comments"></i> Cipher Mastermind</a>
+                <a href="#" onclick="switchAgent('Guard', 'Security & Compliance')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 nav-link"><i class="fa-solid fa-shield-halved"></i> Cipher Guard</a>
+                <a href="#" onclick="switchAgent('AutoCipher', 'Client Hunt & Outreach')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 nav-link"><i class="fa-solid fa-crosshairs"></i> AutoCipher Agent</a>
+                <a href="#" onclick="switchAgent('WebCipher', 'Website Builder & Code')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 nav-link"><i class="fa-solid fa-code"></i> WebCipher Agent</a>
+                <a href="#" onclick="switchAgent('VideoCipher', 'Video Studio & Calendar')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 nav-link"><i class="fa-solid fa-video"></i> VideoCipher Studio</a>
+            </nav>
+        </div>
+        <div class="pt-6 border-t border-zinc-800 mt-6">
+            <button onclick="openSettings()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm text-zinc-300 transition"><i class="fa-solid fa-gear"></i> API Settings</button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-16 border-b border-zinc-800 bg-zinc-900/50 flex items-center justify-between px-6">
+            <span id="current-agent-title" class="text-sm font-semibold tracking-wide text-emerald-400 uppercase">Cipher Mastermind Active</span>
+            <div class="flex items-center gap-3">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-zinc-400">Gemini Direct Linked</span>
+            </div>
+        </header>
+
+        <!-- Chat Workspace -->
+        <div class="flex-1 p-6 overflow-y-auto flex flex-col justify-between max-w-4xl w-full mx-auto">
+            <div id="chat-messages" class="flex-1 space-y-4 overflow-y-auto pr-2 mb-4">
+                <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl max-w-2xl">
+                    <p class="text-sm text-zinc-300">Hello Amiga! Main hoon aapka **Cipher Mastermind** agent. Google AI Studio ki API Key ⚙️ settings mein daaliye, aur phir mujhse koi bhi agency strategy, client outreach ya code banwayiye!</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 pt-2">
+                <input type="text" id="user-input" placeholder="Type a command or query for Cipher..." class="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-emerald-500 text-zinc-100 shadow-inner">
+                <button onclick="sendMessage()" class="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold px-6 py-3.5 rounded-xl text-sm transition shadow-lg flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <h3 class="text-lg font-bold text-zinc-100 mb-2"><i class="fa-solid fa-key text-emerald-400"></i> Google AI Studio API Key</h3>
+            <p class="text-xs text-zinc-400 mb-4">Apni Google AI Studio wali API Key yahan paste karein. Yeh sirf aapke browser mein secure rahegi.</p>
+            <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm mb-4 text-zinc-100 focus:outline-none focus:border-emerald-500">
+            <div class="flex justify-end gap-3">
+                <button onclick="closeSettings()" class="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-xl text-sm">Cancel</button>
+                <button onclick="saveApiKey()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold rounded-xl text-sm">Save Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = "You are Cipher Mastermind, an expert AI strategist for HDT Digital agency.";
+
+        function openSettings() { 
+            document.getElementById('settings-modal').classList.remove('hidden');
+            const savedKey = localStorage.getItem('hdt_gemini_key') || '';
+            document.getElementById('api-key-input').value = savedKey;
+        }
+        function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
+        
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if(!key) { alert('Please enter a valid API key!'); return; }
+            localStorage.setItem('hdt_gemini_key', key);
+            alert('API Key saved successfully!');
+            closeSettings();
+        }
+
+        function switchAgent(agentName, roleDesc) {
+            document.getElementById('current-agent-title').innerText = `Cipher ${agentName} Active`;
+            if(agentName === 'Mastermind') currentRole = "You are Cipher Mastermind, an expert AI strategist for HDT Digital agency.";
+            if(agentName === 'Guard') currentRole = "You are Cipher Guard, an expert in security, spam prevention, and compliance for outreach.";
+            if(agentName === 'AutoCipher') currentRole = "You are AutoCipher, an autonomous client hunt and lead generation agent for HDT Digital.";
+            if(agentName === 'WebCipher') currentRole = "You are WebCipher, an expert full-stack web developer building clean UI code.";
+            if(agentName === 'VideoCipher') currentRole = "You are VideoCipher, a creative video editor and content calendar planner for reels.";
+            
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML += `<div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl max-w-2xl"><p class="text-sm text-emerald-400">Switched to Cipher ${agentName} (${roleDesc}). Ready for tasks!</p></div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chat = document.getElementById('chat-messages');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const apiKey = localStorage.getItem('hdt_gemini_key');
+            if(!apiKey) {
+                openSettings();
+                alert('Pehle API Settings mein apni Google AI Studio Key daaliye!');
+                return;
+            }
+
+            // User bubble
+            chat.innerHTML += `<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl max-w-2xl ml-auto"><p class="text-sm text-emerald-200">${text}</p></div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            // Loading bubble
+            const loadingId = 'loading-' + Date.now();
+            chat.innerHTML += `<div id="${loadingId}" class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl max-w-2xl"><p class="text-sm text-zinc-400 animate-pulse">Cipher is thinking...</p></div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: currentRole + "\n\nUser query: " + text }] }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+
+                if(data.candidates && data.candidates[0].content.parts[0].text) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    chat.innerHTML += `<div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl max-w-2xl"><p class="text-sm text-zinc-300 whitespace-pre-wrap">${reply}</p></div>`;
+                } else {
+                    chat.innerHTML += `<div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl max-w-2xl"><p class="text-sm text-red-300">Error: Check your API key or quota.</p></div>`;
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chat.innerHTML += `<div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl max-w-2xl"><p class="text-sm text-red-300">Network Error: ${err.message}</p></div>`;
+            }
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+  </html>
+  
